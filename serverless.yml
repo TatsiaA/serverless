@@ -5,8 +5,8 @@ custom:
   dynamodb:
     start:
       migrate: true
-    # stages:
-    #   - ${self:provider.stage}
+    stages:
+      - dev
 
 provider:
   name: aws
@@ -38,16 +38,20 @@ functions:
     handler: index.handler
     events:
       - http:
-          path: '/api/{proxy+}'
+          path: api/{proxy+}
           method: any
   getUser:
     handler: index.handler
     events:
-      - http: 'GET /users/{proxy+}'
+      - http:
+          path: users/{proxy+}
+          method: get
   createUser:
     handler: index.handler
     events:
-      - http: 'POST /users'
+      - http:
+          path: users
+          method: post
 
 resources:
   Resources:

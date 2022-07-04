@@ -6,7 +6,6 @@ const app = express();
 
 const AWS = require('aws-sdk');
 
-
 const USERS_TABLE = process.env.USERS_TABLE;
 
 const IS_OFFLINE = process.env.IS_OFFLINE;
