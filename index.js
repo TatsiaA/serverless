@@ -33,6 +33,24 @@ app.get('/api/:id', function (req, res) {
   res.send(`You ask for "${id}" item`)
 })
 
+// Get Users endpoint
+app.get('/users', function (req, res) {
+  const params = {
+    TableName: USERS_TABLE,
+    Select: "ALL_ATTRIBUTES",
+  }
+
+  dynamoDb.scan(params, (error, result) => {
+    if (error) {
+      console.log(error);
+      res.status(400).json({ error: 'Could not get users' });
+    } else {
+      console.log("Get Users succeeded:", JSON.stringify(result, null, 2));
+      res.json(result['Items']);
+    }
+  });
+})
+
 // Get User endpoint
 app.get('/users/:userId', function (req, res) {
   const params = {
@@ -80,6 +98,26 @@ app.post('/users', function (req, res) {
       res.status(400).json({ error: 'Could not create user' });
     }
     res.json({ userId, name });
+  });
+})
+
+// Delete User endpoint
+app.delete('/users/:userId', function (req, res) {
+
+  const params = {
+    TableName: USERS_TABLE,
+    Key: {
+      userId: req.params.userId,
+    },
+  };
+
+  dynamoDb.delete(params, (error, data) => {
+    if (error) {
+      console.log(error);
+      res.status(400).json({ error: 'Could not delete user' });
+    }
+    console.log("Successfully deleted!", data);
+    res.send('Deleted!');
   });
 })
 

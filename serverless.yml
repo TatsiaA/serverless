@@ -40,6 +40,12 @@ functions:
       - http:
           path: api/{proxy+}
           method: any
+  getUsers:
+    handler: index.handler
+    events:
+      - http:
+          path: users
+          method: get
   getUser:
     handler: index.handler
     events:
@@ -52,6 +58,12 @@ functions:
       - http:
           path: users
           method: post
+  deleteUser:
+    handler: index.handler
+    events:
+      - http:
+          path: users/{proxy+}
+          method: delete
 
 resources:
   Resources:
