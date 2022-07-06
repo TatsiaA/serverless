@@ -66,8 +66,8 @@ app.get('/users/:userId', function (req, res) {
       res.status(400).json({ error: 'Could not get user' });
     }
     if (result.Item) {
-      const {userId, name} = result.Item;
-      res.json({ userId, name });
+      const {userId, userName} = result.Item;
+      res.json({ userId, userName });
     } else {
       res.status(404).json({ error: "User not found" });
     }
@@ -76,19 +76,19 @@ app.get('/users/:userId', function (req, res) {
 
 // Create User endpoint
 app.post('/users', function (req, res) {
-  const { userId, name } = req.body;
+  const { userId, userName } = req.body;
   if (typeof userId !== 'string') {
     console.log(userId);
     res.status(400).json({ error: `${userId} must be a string` });
-  } else if (typeof name !== 'string') {
-    res.status(400).json({ error: '"name" must be a string' });
+  } else if (typeof userName !== 'string') {
+    res.status(400).json({ error: '"userName" must be a string' });
   }
 
   const params = {
     TableName: USERS_TABLE,
     Item: {
       userId: userId,
-      name: name,
+      userName: userName,
     },
   };
 
@@ -97,9 +97,37 @@ app.post('/users', function (req, res) {
       console.log(error);
       res.status(400).json({ error: 'Could not create user' });
     }
-    res.json({ userId, name });
+    res.json({ userId, userName });
   });
 })
+
+// Update User endpoint
+app.put('/users/:userId', function (req, res) {
+  const { userId, userName } = req.body;
+
+  const params = {
+    TableName: USERS_TABLE,
+    Key: {
+      userId: req.params.userId,
+    },
+    UpdateExpression: 'set userName = :r',
+    ExpressionAttributeValues: {
+      ':r': userName,
+    },
+    ReturnValues: "UPDATED_NEW"
+  };
+
+  dynamoDb.update(params, function (err, result) {
+    if (err) {
+      console.log("err", err);
+      res.status(400).json({ error: 'Could not update user' });
+    } else {
+      console.log("result", result);
+      res.send(`Updated username! ${result.Attributes.userName}.`);
+    }
+  });
+})
+
 
 // Delete User endpoint
 app.delete('/users/:userId', function (req, res) {

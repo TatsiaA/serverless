@@ -64,6 +64,12 @@ functions:
       - http:
           path: users/{proxy+}
           method: delete
+  updateUser:
+    handler: index.handler
+    events:
+      - http:
+          path: users/{proxy+}
+          method: put
 
 resources:
   Resources:
